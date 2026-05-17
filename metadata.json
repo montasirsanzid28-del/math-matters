@@ -1,0 +1,8 @@
+{
+  "name": "Math Matters - Soumitra Saha",
+  "description": "Premium math coaching by Soumitra Saha specializing in Edexcel A Math, B Math, and Further Pure Math in Dhanmondi, Dhaka.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
