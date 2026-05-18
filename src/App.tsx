@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { 
   BookOpen, Calculator, GraduationCap, MapPin, 
-  Phone, Mail, ArrowRight, CheckCircle2, Menu, X, Star, Quote
+  Phone, Mail, ArrowRight, CheckCircle2, Menu, X, Star, Quote, Plus, Minus
 } from 'lucide-react';
+import ConstellationBackground from './components/ConstellationBackground';
+import CourseIcon3D from './components/CourseIcons3D';
 
 export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,6 +16,7 @@ export default function App() {
     message: ''
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [expandedCourse, setExpandedCourse] = useState<number | null>(null);
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -84,9 +87,11 @@ export default function App() {
 
       {/* Hero */}
       <section className="pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 bg-indigo-950 text-white overflow-hidden relative">
-        <div className="absolute top-0 right-0 p-32 opacity-10 pointer-events-none translate-x-1/3 -translate-y-1/4">
+        <ConstellationBackground />
+        
+        <div className="absolute top-0 right-0 p-32 opacity-5 pointer-events-none translate-x-1/3 -translate-y-1/4">
            {/* Big decorative math symbol */}
-           <Calculator className="w-96 h-96" />
+           <Calculator className="w-96 h-96 text-indigo-400" />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
@@ -312,46 +317,96 @@ export default function App() {
                   title: "A Math",
                   desc: "Foundational mastery focusing on algebraic manipulation, calculus, and geometry. Prepares students rigorously for O Level.",
                   tags: ["O Level", "Grades 9-10"],
-                  color: "indigo"
+                  syllabus: ["Algebraic Manipulation", "Trigonometric Identities", "Differentiation & Integration", "Coordinate Geometry"],
+                  objectives: "Master foundational algebraic manipulation and develop strong calculus skills necessary for O Level success.",
+                  sample: "Find the coordinates of the stationary points on the curve y = x³ - 3x² - 9x + 5 and determine their nature."
                 },
                 {
                   title: "B Math",
                   desc: "Intermediate application developing problem-solving strategies, statistical analysis, and mathematical modeling.",
                   tags: ["O Level", "Grades 9-10"],
-                  color: "amber"
+                  syllabus: ["Vectors & Matrices", "Probability & Statistics", "Kinematics", "Mathematical Modeling"],
+                  objectives: "Apply strategic problem-solving to construct models and analyze complex statistical data.",
+                  sample: "Given matrix A and B, determine the inverse of A and use it to solve the given set of simultaneous equations."
                 },
                 {
                   title: "Further Pure Math",
                   desc: "Advanced theoretical concepts including complex numbers, matrices, and rigorous proofs for top-tier university prep.",
                   tags: ["A Level", "Grades 11-12"],
-                  color: "emerald"
+                  syllabus: ["Complex Numbers", "Roots of Polynomials", "Differential Equations", "Maclaurin Series"],
+                  objectives: "Rigorous proof construction, abstract reasoning, and mastery of theoretical concepts for university entrance.",
+                  sample: "Prove by mathematical induction that Σ r(r+1) = n(n+1)(n+2)/3 for all positive integers n."
                 },
                 {
                   title: "Foundation Level",
                   desc: "Building confidence and strong fundamental skills to set the stage for future complexities required at O Level.",
                   tags: ["Preparation", "Grades 6-8"],
-                  color: "slate"
+                  syllabus: ["Number Theory", "Basic Algebra", "Area & Perimeter", "Data Handling"],
+                  objectives: "Build absolute confidence in basic arithmetic and algebraic operations to prepare for upper-middle grade complexities.",
+                  sample: "Solve for x: 3(x + 4) - 2(2x - 1) = 15."
                 }
-              ].map((course, idx) => (
-                <div key={idx} className="bg-white/5 border border-white/10 hover:border-white/20 rounded-3xl p-8 hover:bg-white/10 transition-all flex flex-col h-full backdrop-blur-sm group">
-                  <div className="flex gap-2 flex-wrap mb-8">
+              ].map((course, idx) => {
+                const isExpanded = expandedCourse === idx;
+                return (
+                <div key={idx} onClick={() => setExpandedCourse(isExpanded ? null : idx)} className={`relative bg-white/5 border rounded-3xl p-8 transition-all duration-300 flex flex-col h-full backdrop-blur-sm group cursor-pointer overflow-hidden ${isExpanded ? 'border-amber-400/50 sm:col-span-2 bg-white/10 shadow-2xl shadow-indigo-900/50' : 'border-white/10 hover:border-white/20 hover:bg-white/10 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-900/50'}`}>
+                  
+                  {/* 3D Icon Background */}
+                  <div className="absolute -right-12 -top-12 w-48 h-48 opacity-20 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none z-0">
+                     <CourseIcon3D type={course.title} />
+                  </div>
+
+                  <div className="relative z-10 flex gap-2 flex-wrap mb-8">
                     {course.tags.map(tag => (
                       <span key={tag} className="text-xs font-bold uppercase tracking-wider px-3 py-1.5 bg-indigo-900/80 text-indigo-200 rounded text-center">
                         {tag}
                       </span>
                     ))}
                   </div>
-                  <h4 className="text-3xl font-serif font-bold mb-4 group-hover:text-amber-400 transition-colors">{course.title}</h4>
-                  <p className="text-indigo-200 leading-relaxed mb-8 text-base">
+                  <div className="relative z-10 flex justify-between items-start mb-4">
+                    <h4 className={`text-3xl font-serif font-bold transition-colors duration-300 ${isExpanded ? 'text-amber-400' : 'group-hover:text-amber-400'}`}>{course.title}</h4>
+                    <div className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center transition-colors ${isExpanded ? 'text-amber-400 bg-amber-400/20' : 'text-indigo-300 bg-indigo-900/50 group-hover:text-amber-400 group-hover:bg-amber-400/10'}`}>
+                      {isExpanded ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    </div>
+                  </div>
+                  <p className={`relative z-10 text-indigo-200 leading-relaxed text-base transition-all duration-300 ${isExpanded ? 'mb-6' : 'mb-8'}`}>
                     {course.desc}
                   </p>
-                  <div className="mt-auto border-t border-white/10 pt-6">
-                    <a href="#contact" className="text-sm font-semibold flex items-center gap-2 hover:text-amber-400 transition-colors cursor-pointer w-fit group/btn">
+                  
+                  {isExpanded && (
+                    <div className="relative z-10 mb-8 grid sm:grid-cols-2 gap-8 border-t border-indigo-800/50 pt-6 animate-in fade-in slide-in-from-top-4 duration-500">
+                        <div>
+                            <h5 className="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">Syllabus Highlights</h5>
+                            <ul className="space-y-2">
+                                {course.syllabus.map((item, i) => (
+                                    <li key={i} className="flex items-start gap-2 text-sm text-indigo-100">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50 mt-1.5 shrink-0" />
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className="space-y-6">
+                            <div>
+                                <h5 className="text-sm font-bold text-amber-400 uppercase tracking-wider mb-2">Learning Objectives</h5>
+                                <p className="text-sm text-indigo-100 leading-relaxed">{course.objectives}</p>
+                            </div>
+                            <div className="bg-indigo-950/50 border border-indigo-800 rounded-xl p-4">
+                                <h5 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-2">Sample Problem</h5>
+                                <p className="text-sm text-indigo-200 font-mono italic">"{course.sample}"</p>
+                            </div>
+                        </div>
+                    </div>
+                  )}
+
+                  <div className="relative z-10 mt-auto border-t border-white/10 pt-6 flex justify-between items-center">
+                    <a href="#contact" onClick={(e) => { e.stopPropagation(); }} className="text-sm font-semibold flex items-center gap-2 hover:text-amber-400 transition-colors cursor-pointer w-fit group/btn">
                       Apply for enrollment <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </a>
+                    <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest sm:hidden group-hover:text-amber-400/70 transition-colors">{isExpanded ? 'Close' : 'View details'}</span>
+                    <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest hidden sm:block group-hover:text-amber-400/70 transition-colors">{isExpanded ? 'Close details' : 'Click to view details'}</span>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         </div>
@@ -409,12 +464,12 @@ export default function App() {
                     </p>
                   </div>
                   
-                  <div className="w-full aspect-[16/10] bg-indigo-900/80 rounded-2xl border border-indigo-700 flex flex-col items-center justify-center relative overflow-hidden group my-8">
-                     {/* Picture placeholder for location */}
-                     <MapPin className="w-10 h-10 text-indigo-400/50 mb-3 relative z-10 group-hover:scale-110 transition-transform" />
-                     <p className="text-xs font-bold uppercase tracking-widest text-indigo-300 relative z-10">Picture Placeholder</p>
-                     <p className="text-xs text-indigo-400 mt-1 relative z-10">Add Location Photo</p>
-                  </div>
+                  <a href="https://share.google/SRq3lpgbaysSWP7DY" target="_blank" rel="noopener noreferrer" className="w-full aspect-[16/10] bg-indigo-900/80 rounded-2xl border border-indigo-700 flex flex-col items-center justify-center relative overflow-hidden group my-8 hover:border-amber-400/50 transition-colors">
+                     <div className="absolute inset-0 bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=Dhanmondi,Dhaka&zoom=15&size=600x400&maptype=roadmap&style=feature:all|element:labels.text.fill|color:0x8ec3b9&style=feature:all|element:labels.text.stroke|color:0x1a3646&style=feature:administrative.country|element:geometry.stroke|color:0x4b6878&style=feature:administrative.land_parcel|element:labels.text.fill|color:0x64779e&style=feature:landscape.man_made|element:geometry.stroke|color:0x334e87&style=feature:landscape.natural|element:geometry|color:0x023e58&style=feature:poi|element:geometry|color:0x283d6a&style=feature:poi|element:labels.text.fill|color:0x6f9ba5&style=feature:poi|element:labels.text.stroke|color:0x1d2c4d&style=feature:road|element:geometry|color:0x304a7d&style=feature:road|element:labels.text.fill|color:0x98a5be&style=feature:road|element:labels.text.stroke|color:0x1d2c4d&style=feature:road.highway|element:geometry|color:0x2c6675&style=feature:road.highway|element:geometry.stroke|color:0x255763&style=feature:road.highway|element:labels.text.fill|color:0xb0d5ce&style=feature:road.highway|element:labels.text.stroke|color:0x023e58&style=feature:transit|element:labels.text.fill|color:0x98a5be&style=feature:transit|element:labels.text.stroke|color:0x1d2c4d&style=feature:transit.line|element:geometry.fill|color:0x283d6a&style=feature:transit.station|element:geometry|color:0x3a4762&style=feature:water|element:geometry|color:0x0e1626&style=feature:water|element:labels.text.fill|color:0x4e6d70')] bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity"></div>
+                     <MapPin className="w-10 h-10 text-amber-400 mb-3 relative z-10 group-hover:-translate-y-1 transition-transform" />
+                     <p className="text-xs font-bold uppercase tracking-widest text-white relative z-10">Ceragram Location</p>
+                     <p className="text-xs text-indigo-300 mt-1 relative z-10 underline underline-offset-2">Open in Google Maps</p>
+                  </a>
 
                   <div className="space-y-6 pt-4 border-t border-indigo-800">
                     <div className="flex items-start gap-4">
@@ -422,7 +477,7 @@ export default function App() {
                         <MapPin className="w-6 h-6" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg">Ceragram (Primary)</h4>
+                        <a href="https://share.google/SRq3lpgbaysSWP7DY" target="_blank" rel="noopener noreferrer" className="font-bold text-lg hover:text-amber-400 transition-colors">Ceragram (Primary)</a>
                         <p className="text-indigo-200">Dhanmondi, Dhaka</p>
                         <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-widest text-amber-950 bg-amber-400 px-2 py-1 rounded">Current Hub</span>
                       </div>
@@ -467,7 +522,7 @@ export default function App() {
                     <MapPin className="w-6 h-6 text-amber-400 mt-1" />
                     <div>
                       <p className="text-sm text-indigo-300 font-medium mb-1">Location</p>
-                      <p className="text-lg">Ceragram<br/>Dhanmondi, Dhaka</p>
+                      <a href="https://share.google/SRq3lpgbaysSWP7DY" target="_blank" rel="noopener noreferrer" className="text-lg hover:text-amber-400 transition-colors">Ceragram<br/>Dhanmondi, Dhaka</a>
                     </div>
                   </div>
 
